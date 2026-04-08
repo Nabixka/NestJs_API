@@ -6,9 +6,10 @@ import { mapItem } from "./helper/itemMap"
 export class ItemsService{
   constructor(private knexService: KnexService) {}
 
+  // Get All
   async getAll(){
       const items = await this.knexService.connection('items')
-      .join('users', 'user_id', 'users.id')
+      .join('users', 'items.user_id', 'users.id')
       .select(
         'items.*',
         'users.id as user_id',
@@ -21,21 +22,62 @@ export class ItemsService{
       }
   }
 
+  // Get One
   async getOne(id: number){
-      return this.knexService.connection('items')
-      .where({ id })
+      const item = await this.knexService.connection('items')
+      .join('users', 'items.user_id', 'users.id')
+      .select(
+        'items.*',
+        'users.id as user_id',
+        'users.username as username'
+      )
+      .where('items.id', id )
       .first()
+
+      return {
+        message: "success",
+        data: mapItem(item)
+      }
   }
 
-  async create(data: {id: string, title: string, location: string, image: string, category: string, description: string}){
-    const item = await this.knexService.connection('items')
+  // Create
+  async create(data: {
+    title: string, 
+    location: string, 
+    category: string, 
+    status: string,
+    description: string,
+    user_id: number,
+    image: string
+  }){
+    const [item] = await this.knexService.connection('items')
     .insert(data)
     .returning("*")
+
+    const getItem = await this.knexService.connection('items')
+    .join('users', 'items.user_id', 'users.id')
+    .select(
+      'items.*',
+      'users.id as users_id',
+      'users.username as username'
+    )
+    .where('items.id', item.id)
+    .first()
+
+    return {
+      message: "success",
+      data: mapItem(getItem)
+    }
   }
 
+  // Delete
   async delete(id: number){
-      return this.knexService.connection('items')
+      const del = await this.knexService.connection('items')
       .where({ id })
       .del()
+
+      return {
+        message: "success"
+      }
   } 
 }
