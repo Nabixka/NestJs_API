@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Put, Param, Delete, HttpCode } from '@nest
 import { UsersService } from './users.service';
 import { ValidateUserFormPipe } from 'src/pipes/validate_user_form.pipe';
 import { ValidateUserExist } from 'src/pipes/validate_user_exist.pipe';
+import { ValidateEmailExist } from 'src/pipes/validate_email_exist.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -21,7 +22,7 @@ export class UsersController {
 
   // Register
   @Post('/register')
-  register(@Body(new ValidateUserFormPipe()) body: {username: string, email: string, password: string}){
+  register(@Body(new ValidateUserFormPipe(), ValidateEmailExist) body: {username: string, email: string, password: string}){
     return this.usersService.register(body)
   }
 

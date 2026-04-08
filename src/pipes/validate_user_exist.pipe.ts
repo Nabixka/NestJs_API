@@ -14,7 +14,6 @@ export class ValidateUserExist implements PipeTransform{
       .where({ id })
       .first()
 
-      
       if(!user){
         throw new NotFoundException("User Tidak Ada")
       }

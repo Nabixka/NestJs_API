@@ -9,10 +9,10 @@ exports.up = function(knex) {
         table.text('description')
         table.text('image')
         table.text('location')
-        table.string('status')
+        table.enu('status', ['lost', 'found'])
         table.integer('user_id').unsigned()
         table.foreign('user_id').references('users.id').onDelete('cascade')
-        table.enu('category', ['lost', 'found'])
+        table.string('category')
         table.timestamps()
     })
 };

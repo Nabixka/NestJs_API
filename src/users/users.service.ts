@@ -7,14 +7,24 @@ export class UsersService {
 
   // Get All User
   async findAll(){
-    return this.knexService.connection('users').select('*')
+    const users = await this.knexService.connection('users').select('*')
+
+    return {
+      message: "success",
+      data: users
+    }
   }
 
   // Get One User
   async findOne(id: number){
-    return this.knexService.connection('users')
+    const user = await this.knexService.connection('users')
     .where({id})
     .first()
+
+    return {
+      message: "success",
+      data: user
+    }
   }
 
   // Register
@@ -23,23 +33,34 @@ export class UsersService {
     .insert(data)
     .returning('*')
 
-    return user
+    return {
+      message: "success",
+      data: user
+    }
   }
 
   // Update Password
   async update(id: number, data: {email: string, password: string}){
-    return this.knexService.connection('users')
+    const user = await this.knexService.connection('users')
     .where({ id })
     .update(data)
     .returning('*')
 
+    return {
+      message: "success",
+      data: user
+    }
   }
 
   // Delete 
   async remove(id: number){
-    return this.knexService.connection('users')
+    const del = await this.knexService.connection('users')
     .where({ id })
     .del()
+
+    return {
+      message: "success"
+    }
   }
 
   // Login
