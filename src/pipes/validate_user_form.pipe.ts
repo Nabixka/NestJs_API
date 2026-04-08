@@ -9,8 +9,8 @@ export class ValidateUserFormPipe implements PipeTransform{
         if(!value.email || !value.email.includes('@')){
             throw new BadRequestException('Email Wajib Diisi')
         }
-        if(!value.password){
-            throw new BadRequestException('Password Wajib Diisi')
+        if(!value.password || value.password.length < 8){
+            throw new BadRequestException('Password Wajib Diisi Dan Minimal 8')
         }
 
         return value

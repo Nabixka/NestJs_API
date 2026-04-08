@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException, PipeTransform } fro
 import { KnexService } from "src/database/knex.service";
 
 @Injectable()
-export class ValidaeUserExist implements PipeTransform{
+export class ValidateUserExist implements PipeTransform{
     constructor(private knexService: KnexService) {}
     async transform(value: string) {
       const id = Number(value)
@@ -14,6 +14,7 @@ export class ValidaeUserExist implements PipeTransform{
       .where({ id })
       .first()
 
+      
       if(!user){
         throw new NotFoundException("User Tidak Ada")
       }

@@ -1,35 +1,45 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ValidateUserFormPipe } from 'src/pipes/validate_user_form.pipe';
-import { ValidaeUserExist } from 'src/pipes/validate_user_exist.pipe';
+import { ValidateUserExist } from 'src/pipes/validate_user_exist.pipe';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // Get All
   @Get()
   getAll(){
     return this.usersService.findAll()
   }
 
+  // Get One
   @Get(':id')
-  getOne(@Param('id', ValidaeUserExist) id: string){
+  getOne(@Param('id', ValidateUserExist) id: string){
     return this.usersService.findOne(Number(id))
   }
 
-  @Post()
-  create(@Body(new ValidateUserFormPipe()) body: {username: string, email: string, password: string}){
-    return this.usersService.create(body)
+  // Register
+  @Post('/register')
+  register(@Body(new ValidateUserFormPipe()) body: {username: string, email: string, password: string}){
+    return this.usersService.register(body)
   }
 
+  // Update
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: {username: string, email: string, password: string}){
+  update(@Param('id', ValidateUserExist) id: string, @Body() body: {email: string, password: string}){
     return this.usersService.update(Number(id), body)
   }
 
+  // Delete
   @Delete(':id')
   delete(@Param('id') id: string){
     return this.usersService.remove(Number(id))
   }
 
+  @Post('/login')
+  @HttpCode(200)
+  login(@Body('email') email: string, @Body('password') password: string){
+    return this.usersService.login(email, password)
+  }
 }
