@@ -63,24 +63,12 @@ export class UsersService {
     }
   }
 
-  // Login
-  async login(email: string, password: string){
+  async findByEmail(email: string){
     const user = await this.knexService.connection('users')
     .where({ email })
-    .first()
-
-    if(!email || !password){
-      throw new BadRequestException('Isi Form Dengan Benar')
-    }
-
-    if(!user){
-      throw new NotFoundException('User Tidak Ada')
-    }
-
-    delete user.password
-
+    .first() 
     return {
-      message: 'Login Berhasil',
+      message: "success",
       data: user
     }
   }
