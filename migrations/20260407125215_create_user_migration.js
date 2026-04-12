@@ -7,6 +7,7 @@ exports.up = function(knex) {
         table.increments();
         table.string('username');
         table.string('password');
+        table.string('nomor');
         table.string('email').unique();
         table.string('otp_code').nullable();
         table.string('role');

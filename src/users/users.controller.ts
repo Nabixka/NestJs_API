@@ -15,12 +15,7 @@ export class UsersController {
     return this.usersService.findAll()
   }
 
-  // Register
-  @Post('/register')
-  register(@Body(new ValidateUserFormPipe(), ValidateEmailExist) body: { username: string, email: string, password: string }) {
-    return this.usersService.register(body)
-  }
-
+  // Get User Profil
   @Get('/profil')
   @UseGuards(JwtAuthGuard)
   profil(@Req() req) {
@@ -31,19 +26,13 @@ export class UsersController {
   }
 
   // Get One
-  @Get(':id')
+  @Get('/:id')
   getOne(@Param('id', ValidateUserExist) id: string) {
     return this.usersService.findOne(Number(id))
   }
 
-  // Update
-  @Put(':id')
-  update(@Param('id', ValidateUserExist) id: string, @Body() body: { email: string, password: string }) {
-    return this.usersService.update(Number(id), body)
-  }
-
   // Delete
-  @Delete(':id')
+  @Delete('/:id')
   delete(@Param('id') id: string) {
     return this.usersService.remove(Number(id))
   }

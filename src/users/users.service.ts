@@ -7,7 +7,15 @@ export class UsersService {
 
   // Get All User
   async findAll(){
-    const users = await this.knexService.connection('users').select('*')
+    const users = await this.knexService.connection('users').select(
+      'username',
+      'nomor',
+      'email',
+      'otp_code',
+      'role',
+      'status',
+      'otp_expired'
+    )
 
     return {
       message: "success",
@@ -21,30 +29,7 @@ export class UsersService {
     .where({id})
     .first()
 
-    return {
-      message: "success",
-      data: user
-    }
-  }
-
-  // Register
-  async register(data: {username: string, email: string, password: string}){
-    const [user] = await this.knexService.connection('users')
-    .insert(data)
-    .returning('*')
-
-    return {
-      message: "success",
-      data: user
-    }
-  }
-
-  // Update Password
-  async update(id: number, data: {email: string, password: string}){
-    const user = await this.knexService.connection('users')
-    .where({ id })
-    .update(data)
-    .returning('*')
+    delete user.password 
 
     return {
       message: "success",
@@ -63,10 +48,12 @@ export class UsersService {
     }
   }
 
+  // Find By Email
   async findByEmail(email: string){
     const user = await this.knexService.connection('users')
     .where({ email })
     .first() 
+
     return {
       message: "success",
       data: user
