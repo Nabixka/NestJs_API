@@ -8,6 +8,7 @@ export class UsersService {
   // Get All User
   async findAll(){
     const users = await this.knexService.connection('users').select(
+      'id',
       'username',
       'nomor',
       'email',

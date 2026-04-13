@@ -28,13 +28,24 @@ export class ReportService{
     }
   }
 
-  async create(data: {user_id: number, item_id: number, proof: string, reason: string}){
+  // Creat Report
+  async create(data: {user_id: string, item_id: string, proof: string, reason: string}){
     const [create] = await this.knexService.connection('report')
     .insert(data)
     .returning("*")
 
     const getData = await this.knexService.connection('report')
-    .join()
+    .join("users", "report.user_id", "users.id")
+    .join("items", "report.item_id", "items.id")
+    .select(
+      "report.*",
+      "users.id" as "user_id",
+      "users.username" as "username",
+      "items.id" as "item_id",
+      "items.image" as "image"
+    )
+    .where("report.id", create.id)
+    .first()
 
     return{
       message: "success",
