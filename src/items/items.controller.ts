@@ -14,11 +14,6 @@ export class ItemsController {
     return this.itemsService.getAll()
   }
 
-  @Get('/:id')
-  getOne(@Param('id', ValidateItemExist) id: string){
-    return this.itemsService.getOne(Number(id))
-  }
-
   @Post()
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -43,6 +38,11 @@ export class ItemsController {
       ...data,
       image: `/uploads/items/${file?.filename}`
     })
+  }
+
+  @Get('/:id')
+  getOne(@Param('id', ValidateItemExist) id: string){
+    return this.itemsService.getOne(Number(id))
   }
 
   @Delete('/:id')

@@ -3,7 +3,6 @@ import { UsersService } from './users.service';
 import { ValidateUserFormPipe } from 'src/pipes/validate_user_form.pipe';
 import { ValidateUserExist } from 'src/pipes/validate_user_exist.pipe';
 import { ValidateEmailExist } from 'src/pipes/validate_email_exist.pipe';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('users')
 export class UsersController {
@@ -13,16 +12,6 @@ export class UsersController {
   @Get()
   getAll() {
     return this.usersService.findAll()
-  }
-
-  // Get User Profil
-  @Get('/profil')
-  @UseGuards(JwtAuthGuard)
-  profil(@Req() req) {
-    return {
-      message: "success",
-      data: req.user
-    }
   }
 
   // Get One

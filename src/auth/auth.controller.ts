@@ -1,25 +1,24 @@
-import { Controller, HttpCode, Post, Body, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from './Auth.Guard';
 import { AuthService } from './auth.service';
-import { ValidateUserFormPipe } from 'src/pipes/validate_user_form.pipe';
-import { ValidateEmailExist } from 'src/pipes/validate_email_exist.pipe';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+    constructor(private authService: AuthService) {}
 
-  @Post('/login')
-  @HttpCode(200)
-  login(@Body() body: { email: string, password: string }) {
-    return this.authService.login(body.email, body.password)
-  }
+    @Post('/login')
+    login(@Body() data: {email: string, password: string} ){
+        return this.authService.login(data)
+    }
 
-  @Post('/register') 
-  register(@Body(ValidateUserFormPipe, ValidateEmailExist) body: {email: string, username: string, password: string}){
-    return this.authService.register(body)
-  }
+    @Post('/register')
+    register(@Body() data: {username: string, email: string, password: string, role: string}){
+        return this.authService.register(data)
+    }
 
-  @Put('/forgot')
-  forgot(@Body() body: {email: string, password: string}){
-    return this.authService.forget(body)
-  }
+    @Get('profile')
+    @UseGuards(AuthGuard)
+    getProfile(@Req() req) {
+        return req.user;
+    }
 }

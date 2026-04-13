@@ -4,8 +4,10 @@ import { UsersModule } from './users/users.module';
 import { ItemsModule } from './items/items.module';
 import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [DatabaseModule, AuthModule, UsersModule, ItemsModule, ReportModule],
+  providers: [AuthService],
 })
 export class AppModule {}

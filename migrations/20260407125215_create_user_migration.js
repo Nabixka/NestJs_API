@@ -11,6 +11,7 @@ exports.up = function(knex) {
         table.string('email').unique();
         table.string('otp_code').nullable();
         table.string('role');
+        table.string('token')
         table.string('status').defaultTo('active');
         table.bigInteger('otp_expired').nullable();
         table.timestamps();

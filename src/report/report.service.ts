@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { KnexService } from "src/database/knex.service";
 import { reportMap } from "./helper/reportMap";
 
@@ -8,23 +8,41 @@ export class ReportService{
   
   // Get All Report
   async getAll(){
-    const report = await this.knexService.connection('report').select("*")
+    const report = await this.knexService.connection('report')
+    .join("users", "report.user_id", "users.id")
+    .join("items", "report.item_id", "items.id")
+    .select(
+      "report.*",
+      "users.id" as "user_id",
+      "users.username" as "username",
+      "items.id" as "item_id",
+      "items.image" as "image"
+    )
 
     return {
       message: "success",
-      data: report
+      data: report.map(reportMap)
     }
   }
 
   // Get Report By Id
   async getOne(id: number){
     const report = await this.knexService.connection('report')
-    .where({ id })
+    .join("users", "report.user_id", "users.id")
+    .join("items", "report.item_id", "items.id")
+    .select(
+      "report.*",
+      "users.id" as "user_id",
+      "users.username" as "username",
+      "items.id" as "item_id",
+      "items.image" as "image"
+    )
+    .where("report.id", id)
     .first()
 
     return{
       message: "success",
-      data: report
+      data: reportMap(report)
     }
   }
 
@@ -50,6 +68,29 @@ export class ReportService{
     return{
       message: "success",
       data: reportMap(getData)
+    }
+  }
+
+  async getByUser(id: number){
+    const report = await this.knexService.connection('report')
+    .join("users", "report.user_id", "users.id")
+    .join("items", "report.item_id", "items.id")
+    .select(
+      "report.*",
+      "users.id" as "user_id",
+      "users.username" as "username",
+      "items.id" as "item_id",
+      "items.image" as "image"
+    )
+    .where("users.id", id)
+
+    if(report.length == 0){
+      throw new NotFoundException("User Tersebut TIdak Mendapatkan Laporan")
+    }
+
+    return {
+      message: "success",
+      data: report.map(reportMap)
     }
   }
 

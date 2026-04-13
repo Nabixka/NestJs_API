@@ -4,6 +4,7 @@ import { ValidateReportExist } from 'src/pipes/report/validate_report_exist.pipe
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ValidateUserExist } from 'src/pipes/validate_user_exist.pipe';
 
 
 @Controller('report')
@@ -13,11 +14,6 @@ export class ReportController {
   @Get()
   getAll(){
     return this.reportService.getAll()
-  }
-
-  @Get("/:id")
-  getOne(@Param("id", ValidateReportExist) id: string){
-    return this.reportService.getOne(Number(id))
   }
 
   @Post()
@@ -34,5 +30,15 @@ export class ReportController {
   create(@UploadedFile() file: Express.Multer.File, @Body() data: {user_id: string, item_id: string, proof: string, reason: string }){
     data.proof = `/uploads/report/${file.filename}`
     return this.reportService.create(data)
+  }
+
+  @Get("/:id")
+  getOne(@Param("id", ValidateReportExist) id: string){
+    return this.reportService.getOne(Number(id))
+  }
+
+  @Get('/user/:id')
+  getReportByUser(@Param('id', ValidateUserExist) id: string){
+    return this.reportService.getByUser(Number(id))
   }
 }
