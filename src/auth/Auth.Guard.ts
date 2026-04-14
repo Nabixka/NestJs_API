@@ -1,7 +1,6 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { KnexService } from "src/database/knex.service";
 import * as jwt from 'jsonwebtoken'
-require("dotenv").config()
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -11,21 +10,22 @@ export class AuthGuard implements CanActivate {
         const req =  context.switchToHttp().getRequest()
 
         const authHeader = req.headers['authorization']
-        if(!authHeader) return false
+        if(!authHeader) throw new UnauthorizedException("hai")
 
-        const token = authHeader
+        const token = authHeader.split(' ')[1];
+        if(!token) throw new UnauthorizedException("test")
         try{
             const decoded: any = jwt.verify(token, `${process.env.SECRET_KEY}`)
             const user = await this.knexService.connection('users')
             .where({ id: decoded.id, token})
             .first()
 
-            if(!user) return false
+            if(!user) throw new UnauthorizedException("djka") 
             req.user = user
             return true
         }
         catch(err){
-            return false
+            throw new UnauthorizedException("dkajdj")
         }
     }
 }

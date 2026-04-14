@@ -5,7 +5,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 
-@Controller('items')
+@Controller('item')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 

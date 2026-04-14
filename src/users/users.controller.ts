@@ -1,22 +1,34 @@
 import { Controller, Get, Post, Body, Put, Param, Delete, HttpCode, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ValidateUserFormPipe } from 'src/pipes/validate_user_form.pipe';
 import { ValidateUserExist } from 'src/pipes/validate_user_exist.pipe';
-import { ValidateEmailExist } from 'src/pipes/validate_email_exist.pipe';
+import { RoleGuard } from 'src/auth/role.guard';
+import { AuthGuard } from 'src/auth/Auth.Guard';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  // Get All
+  // Get All User
   @Get()
-  getAll() {
+  @UseGuards(AuthGuard, new RoleGuard(['Admin, Member']))
+  getAll(@Req() req) {
     return this.usersService.findAll()
+  }
+
+  // Get Profil
+  @Get('/profil')
+  @UseGuards(AuthGuard)
+  getProfil(@Req() req){
+    return {
+      message: "success",
+      data: req.user
+    }
   }
 
   // Get One
   @Get('/:id')
-  getOne(@Param('id', ValidateUserExist) id: string) {
+  @UseGuards(AuthGuard, new RoleGuard(['Admin']))
+  getOne(@Param('id', ValidateUserExist) id: string, @Req() req) {
     return this.usersService.findOne(Number(id))
   }
 
@@ -25,4 +37,5 @@ export class UsersController {
   delete(@Param('id') id: string) {
     return this.usersService.remove(Number(id))
   }
+
 }
