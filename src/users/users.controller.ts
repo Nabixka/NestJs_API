@@ -10,8 +10,7 @@ export class UsersController {
 
   // Get All User
   @Get()
-  @UseGuards(AuthGuard, new RoleGuard(['Admin, Member']))
-  getAll(@Req() req) {
+  getAll() {
     return this.usersService.findAll()
   }
 
@@ -27,8 +26,7 @@ export class UsersController {
 
   // Get One
   @Get('/:id')
-  @UseGuards(AuthGuard, new RoleGuard(['Admin']))
-  getOne(@Param('id', ValidateUserExist) id: string, @Req() req) {
+  getOne(@Param('id', ValidateUserExist) id: string) {
     return this.usersService.findOne(Number(id))
   }
 

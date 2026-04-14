@@ -9,32 +9,45 @@ export class AuthService {
 
     // Login
     async login(data: {email: string, password: string}){
-        const user = await this.knexService.connection('users')
-        .where('email', data.email )
+        const exist = await this.knexService.connection('users')
+        .where("email", data.email)
         .first()
 
-        if(!user){
-            throw new NotFoundException("Email Tidak Terdaftar")
-        }
+        if(!exist) throw new NotFoundException()
+        
+        const isMatch = await bcrypt.compare(data.password, exist.password)
+        if(!isMatch) throw new BadRequestException("Password Salah")
 
-        const isMatch = await bcrypt.compare(data.password, user.password)
-        if(!isMatch) throw new BadRequestException("Password Tidak Sesuai")
-
-        const payload = {
-            id: user.id
-        }
-        const token = jwt.sign(payload, `${process.env.SECRET_KEY}`, {
-            expiresIn: '1d'
-        })
-
-        await this.knexService.connection('users')
-        .where("id", user.id)
-        .update({ token })
+        delete exist.password
 
         return {
-            message: "Berhasil Login",
-            data: {
-                token
+            message: "success",
+            data: exist
+        }
+    }
+
+    async verifyOtp(data: {email: string, otp: string}){
+        const exist = await this.knexService.connection("users")
+        .where("email", data.email)
+        .first()
+
+        if(!exist) throw new NotFoundException
+        if(data.otp == exist.otp_code){
+            const payload = {
+                id : exist.id
+            }
+
+            const token =  jwt.sign(payload, `${process.env.SECRET_KEY}`, {
+                expiresIn: '1d'
+            })
+
+            await this.knexService.connection("users")
+            .where("id", exist.id)
+            .update({ token })
+
+            return {
+                message: "success",
+                data: exist
             }
         }
     }

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Req } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { ValidateItemExist } from 'src/pipes/validate_item_exist.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { extname } from 'path'
+import { AuthGuard } from 'src/auth/Auth.Guard';
 
 @Controller('item')
 export class ItemsController {
@@ -12,6 +13,13 @@ export class ItemsController {
   @Get()
   getAll(){
     return this.itemsService.getAll()
+  }
+
+  @Get('/user')
+  @UseGuards(AuthGuard)
+  getByUser(@Req() req){
+    const user_id = req.user.id
+    return this.itemsService.getByUser(user_id)
   }
 
   @Post()

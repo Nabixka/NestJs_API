@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { KnexService } from "src/database/knex.service";
 import { mapItem } from "./helper/itemMap"
 
@@ -67,6 +67,23 @@ export class ItemsService{
     return {
       message: "success",
       data: mapItem(getItem)
+    }
+  }
+
+  async getByUser(user_id){
+    const exist = await this.knexService.connection('users')
+    .where("id", user_id)
+    .first()
+
+    if(!exist) throw new NotFoundException
+
+    const item = await this.knexService.connection('items')
+    .where("user_id", user_id)
+    .select("*")
+
+    return {
+      message: "success",
+      data: item.map(mapItem)
     }
   }
 
