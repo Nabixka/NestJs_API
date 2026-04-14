@@ -18,15 +18,15 @@ export class AuthController {
         return this.authService.login(data)
     }
 
+    @Post('/register')
+    register(@Body(ValidateUserFormPipe, ValidateEmailExist) data: {username: string, email: string, password: string, role: string}){
+        return this.authService.register(data)
+    }
+
     @Post('/verify-otp')
     @HttpCode(200)
     verify(@Body() data: {email: string, otp: string}){
         return this.authService.verifyOtp(data)
-    }
-
-    @Post('/register')
-    register(@Body(ValidateUserFormPipe, ValidateEmailExist) data: {username: string, email: string, password: string, role: string}){
-        return this.authService.register(data)
     }
     
 }

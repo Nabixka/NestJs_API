@@ -25,7 +25,9 @@ export class AuthGuard implements CanActivate {
             return true
         }
         catch(err){
-            throw new UnauthorizedException("dkajdj")
+            // Dapet Error Ini
+            console.log('JWT ERROR', err)
+            throw new UnauthorizedException()
         }
     }
 }

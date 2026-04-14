@@ -45,9 +45,12 @@ export class AuthService {
             .where("id", exist.id)
             .update({ token })
 
+            delete exist.password
+            delete exist.otp_code
+
             return {
                 message: "success",
-                data: exist
+                data: { ...exist, token }
             }
         }
     }

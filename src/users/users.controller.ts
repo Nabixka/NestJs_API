@@ -17,10 +17,11 @@ export class UsersController {
   // Get Profil
   @Get('/profil')
   @UseGuards(AuthGuard)
-  getProfil(@Req() req){
+  async getProfil(@Req() req){
+    const data = await this.usersService.getSummary(req.user)
     return {
       message: "success",
-      data: req.user
+      data: data
     }
   }
 

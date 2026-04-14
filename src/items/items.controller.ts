@@ -23,6 +23,7 @@ export class ItemsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
       destination: './uploads/items',
@@ -34,16 +35,17 @@ export class ItemsController {
     })
   }))
   create(
+    @Req() req,
     @Body() data: {
       title: string, 
       location: string, 
       category: string, 
       description: string,
-      status: string,
-      user_id: number
+      status: string
     }, @UploadedFile() file: Express.Multer.File){
     return this.itemsService.create({
       ...data,
+      user_id: req.user.id,
       image: `/uploads/items/${file?.filename}`
     })
   }
